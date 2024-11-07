@@ -20,5 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Deploy Hook
-        env: DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
         run: curl "$DEPLOY_HOOK"
