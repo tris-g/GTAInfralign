@@ -1,0 +1,24 @@
+name: Production Testing and Deployment
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  testing:
+    name: Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run pytest
+        run: echo "fake test"
+  deployment:
+    name: Deployment
+    needs: testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Deploy Hook
+        env: DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: curl "$DEPLOY_HOOK"
