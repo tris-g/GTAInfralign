@@ -41,6 +41,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
+    "guardian",
     "accounts.apps.AccountsConfig",
     "analytics.apps.AnalyticsConfig",
     "django.contrib.admin",
@@ -145,3 +146,8 @@ if not DEBUG:
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'guardian.backends.ObjectPermissionBackend',
+)
