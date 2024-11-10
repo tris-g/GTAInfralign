@@ -41,7 +41,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
-    "accounts.apps.AccountsConfig"
+    "accounts.apps.AccountsConfig",
     "analytics.apps.AnalyticsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
