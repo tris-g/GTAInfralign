@@ -12,4 +12,4 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 # https://docs.djangoproject.com/en/3.0/ref/django-admin/#django-admin-createsuperuser
-python manage.py createsuperuser --no-input
+python manage.py createsuperuser --email "" --username "admin" --no-input
