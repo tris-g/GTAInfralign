@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "guardian",
-    'sass_processor',
     'django_bootstrap5',
     "accounts.apps.AccountsConfig",
     "analytics.apps.AnalyticsConfig",
@@ -143,12 +142,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
 # and renames the files with unique names for each version to support long-term caching
-STORAGES = {
-    # ...
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -163,9 +157,4 @@ AUTHENTICATION_BACKENDS = (
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
 ]
-
-SASS_PROCESSOR_INCLUDE_DIRS = [os.path.join(BASE_DIR, "static")]  # Ensure "static" directory is included
-SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, "static")
-SASS_PROCESSOR_ENABLED = True
