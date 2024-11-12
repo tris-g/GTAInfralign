@@ -163,10 +163,12 @@ STATICFILES_FINDERS = [
     'sass_processor.finders.CssFinder',
 ]
 
+# Tell sass-processor where to look for files
+SASS_PROCESSOR_ROOT = STATIC_ROOT  # or os.path.join(BASE_DIR, 'static')
 SASS_PROCESSOR_INCLUDE_DIRS = [
-    os.path.join(BASE_DIR, "static"),  # Ensure "static" directory is included
+    os.path.join(BASE_DIR, 'static'),  # Ensure 'static' directory is included
 ]
-SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, "static")
-SASS_PROCESSOR_ENABLED = True
 
-print(os.path.join(BASE_DIR, 'staticfiles'))
+# Optional: Set up caching (recommended in production)
+SASS_PROCESSOR_ENABLED = True
+SASS_OUTPUT_STYLE = 'compressed'  # Minify the output in production
