@@ -1,4 +1,6 @@
-$font-family-base: "Lucida Console", "Courier New", monospace;
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan&display=swap');
+
+$font-family-base: "League Spartan", sans-serif;
 
 $primary: #ff5733;    // Example: custom primary color
 $secondary: #33c2ff;  // Example: custom secondary color
