@@ -168,3 +168,5 @@ SASS_PROCESSOR_INCLUDE_DIRS = [
 ]
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, "static")
 SASS_PROCESSOR_ENABLED = True
+
+print(os.path.join(BASE_DIR, 'staticfiles'))
