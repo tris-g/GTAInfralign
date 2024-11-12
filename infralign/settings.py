@@ -41,17 +41,17 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
-    "guardian",
-    "accounts.apps.AccountsConfig",
-    "analytics.apps.AnalyticsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'django_bootstrap5',
+    "guardian",
     'sass_processor',
+    'django_bootstrap5',
+    "accounts.apps.AccountsConfig",
+    "analytics.apps.AnalyticsConfig",
 ]
 
 MIDDLEWARE = [
