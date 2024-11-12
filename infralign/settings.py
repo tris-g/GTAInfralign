@@ -168,7 +168,7 @@ SASS_PROCESSOR_ROOT = STATIC_ROOT  # or os.path.join(BASE_DIR, 'static')
 SASS_PROCESSOR_INCLUDE_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Ensure 'static' directory is included
 ]
-
+SASS_PROCESSOR_INCLUDE_FILE_PATTERN = r'^.+\.scss$'
 # Optional: Set up caching (recommended in production)
 SASS_PROCESSOR_ENABLED = True
 SASS_OUTPUT_STYLE = 'compressed'  # Minify the output in production
