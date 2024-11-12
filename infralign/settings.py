@@ -29,8 +29,7 @@ import dj_database_url
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = "RENDER" not in os.environ
-DEBUG = True
+DEBUG = "RENDER" not in os.environ
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -145,6 +144,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
 # and renames the files with unique names for each version to support long-term caching
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+WHITENOISE_ADD_HEADERS_FUNCTION = None
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
