@@ -10,6 +10,3 @@ python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate
-
-# https://docs.djangoproject.com/en/3.0/ref/django-admin/#django-admin-createsuperuser
-python manage.py createsuperuser --email "" --username "admin" --no-input

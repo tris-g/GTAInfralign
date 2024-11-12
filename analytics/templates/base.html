@@ -1,0 +1,26 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Spartan&display=swap">
+    <link rel="stylesheet" href="{% static 'css/custom_bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <div class="sidebar">
+        <a class="logo">Infralign</a>
+        <a>Home</a>
+        <a>Projects</a>
+        <a>Settings</a>
+    </div>
+    <div class="content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+</body>
+</html>

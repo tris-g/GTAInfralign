@@ -1,0 +1,8 @@
+
+$font-family-base: "arial", sans-serif;
+
+$primary: #ff5733;    // Example: custom primary color
+$secondary: #33c2ff;  // Example: custom secondary color
+
+// Import Bootstrap's source SCSS to apply these overrides
+@import "../bootstrap/scss/bootstrap";
