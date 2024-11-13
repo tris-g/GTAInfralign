@@ -1,12 +1,55 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.top-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid lightgrey;
+}
+
+.top-bar-left{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    height: 50px;
+}
+
+.top-bar-right {
+    margin-right: 10px;
+    justify-content: right;
+}
+
+.logo {
+    height: 100%;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.breadcrumb-nav {
+    margin-left: 10px;
+}
+
+.below-top-bar {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+
 /* The side navigation menu */
 .sidebar {
-    margin: 0;
-    padding: 0;
     width: 200px;
-    background-color: #f1f1f1;
-    position: fixed;
     height: 100%;
-    overflow: auto;
+    z-index: 2;
+    box-shadow: 0 5px 10px rgba(154,160,185,.05), 0 15px 40px rgba(166,173,201,.2);
 }
 
 /* Sidebar links */
@@ -32,24 +75,7 @@
 
 /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
 div.content {
-    margin-left: 200px;
-}
-
-/* On screens that are less than 700px wide, make the sidebar into a topbar */
-@media screen and (max-width: 700px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-    .sidebar a {float: left;}
-    div.content {margin-left: 0;}
-}
-
-/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
-@media screen and (max-width: 400px) {
-    .sidebar a {
-        text-align: center;
-        float: none;
-    }
+    background-color: rgb(248, 248, 248);
+    width: 100%;
+    height: 100%;
 }
