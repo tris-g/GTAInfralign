@@ -2,6 +2,10 @@
 
 {% block title %}Dashboard | Infralign{% endblock %}
 
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+{% endblock breadcrumb %}
+
 {% block content %}
-<h1>Dashboard</h1>
-{% endblock %}
+<h3>Welcome {{ username }}</h3>
+{% endblock content %}
