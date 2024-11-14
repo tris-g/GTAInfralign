@@ -7,20 +7,41 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock title %}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Spartan&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/custom_bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <!-- Invisible logout form -->
+    <form id='logout-form' action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+    </form>
 </head>
 <body>
-    <div class="sidebar">
-        <a class="logo">Infralign</a>
-        <a>Home</a>
-        <a>Projects</a>
-        <a>Settings</a>
-    </div>
-    <div class="content">
-        {% block content %}
-        {% endblock content %}
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <span class="logo">INFRALIGN</span>
+            <nav class="breadcrumb-nav" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+                <ol class="breadcrumb" style="margin: 0;">
+                    {% block breadcrumb %}
+                    {% endblock breadcrumb %}
+                </ol>
+            </nav>
+        </div>
+        <div class="top-bar-right">
+            <button class="btn btn-primary" style="display: flex; align-items: center; justify-content: center;" type="submit" form="logout-form" onclick="return confirm('Are you sure you want to logout?')">
+                <span class="material-symbols-outlined">logout</span>
+            </button>
+        </div>
+    </header>
+    <div class="below-top-bar">
+        <div class="sidebar">
+            <a>Home</a>
+            <a>Projects</a>
+            <a>Settings</a>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
     </div>
 </body>
 </html>
