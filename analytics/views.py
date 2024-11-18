@@ -18,6 +18,7 @@ def verbose_user(request) -> str:
 def index(request):
     return render(request, 'index.html', {'username': request.user.username})
 
+@login_required
 def projects(request):
     if not request.user.has_perm('analytics.view_autodeskconstructioncloudproject'):
         raise PermissionDenied
@@ -28,11 +29,13 @@ def projects(request):
         p = AutodeskConstructionCloudProject.objects.all()
     return render(request, 'projects.html', {'can_add_projects': can_add_projects, 'projects': p})
 
+@login_required
 def project(request, pk):
     if not request.user.has_perm('analytics.view_autodeskconstructioncloudproject'):
         raise PermissionDenied
     return render(request, 'project.html', {'project': AutodeskConstructionCloudProject.objects.get(pk=pk)})
 
+@login_required
 def add_project(request):
     if not request.user.has_perm('analytics.add_autodeskconstructioncloudproject'):
         raise PermissionDenied
@@ -47,8 +50,10 @@ def add_project(request):
         form = AutodeskConstructionCloudProjectForm()
     return render(request, "add_project.html", {"form": form})
 
+@login_required
 def delete_project(request, project_pk):
-    """Django view for deleting a Software model."""
+    if not request.user.has_perm('analytics.delete_autodeskconstructioncloudproject'):
+        raise PermissionDenied
     proj = AutodeskConstructionCloudProject.objects.get(pk=project_pk)
     proj.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {proj.pk}:{proj.name}.")
