@@ -14,6 +14,7 @@
     <form id='logout-form' action="{% url 'logout' %}" method="post">
         {% csrf_token %}
     </form>
+    {% block head %}{% endblock head %}
 </head>
 <body>
     <header class="top-bar">
@@ -34,9 +35,9 @@
     </header>
     <div class="below-top-bar">
         <div class="sidebar">
-            <a>Home</a>
-            <a>Projects</a>
-            <a>Settings</a>
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'projects' %}">Projects</a>
+            <a href="">Settings</a>
         </div>
         <div class="content">
             {% block content %}
