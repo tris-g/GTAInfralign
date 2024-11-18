@@ -55,7 +55,7 @@ body {
 /* Sidebar links */
 .sidebar a {
     display: block;
-    color: black;
+    color: #555;
     padding: 16px;
     text-decoration: none;
     font-size: 1.3rem;
@@ -63,7 +63,7 @@ body {
 
 /* Active/current link */
 .sidebar a.active {
-    background-color: #04AA6D;
+    background-color: #ff5733;
     color: white;
 }
 

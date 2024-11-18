@@ -6,11 +6,7 @@ on:
 
 jobs:
   testing:
-    name: Testing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run pytest
-        run: echo "fake test"
+    uses: tris-g/GTAInfralign/.github/workflows/django_test.yaml@main
   deployment:
     name: Deployment
     needs: testing

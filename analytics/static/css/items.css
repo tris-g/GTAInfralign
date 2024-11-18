@@ -1,0 +1,44 @@
+.items-header {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.items-header .add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.items-header .add span {
+    margin-right: 10px;
+}
+
+.items-header a {
+    text-decoration: none;
+}
+
+.search-bar {
+    display: flex;
+}
+
+.search-bar input {
+    width: 25rem;
+    margin-right: 10px;
+}
+
+.search-bar button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.project {
+    cursor: pointer;
+}
+
+.project button.action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
