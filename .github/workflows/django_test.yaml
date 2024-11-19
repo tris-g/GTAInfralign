@@ -45,3 +45,4 @@ jobs:
           DB_PASSWORD: postgres
           DB_PORT: 5432
           DB_NAME: postgres
+          SECRET_KEY: verysecret
