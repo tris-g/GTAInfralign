@@ -6,7 +6,7 @@
 {% block head %}<link rel="stylesheet" href="{% static 'css/items.css' %}">{% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
 <li class="breadcrumb-item active" aria-current="page">Projects</li>
 {% endblock %}
 
@@ -16,11 +16,11 @@
     <input class="form-control" type="search" placeholder="Search" aria-label="Search">
     <button class="btn btn-outline-success" type="submit"><span class="material-symbols-outlined">search</span></button>
   </form>
-  {% if can_add_projects %}
+  {% if perms.analytics.add_autodeskconstructioncloudproject %}
     <a href="{% url 'add_project' %}"><button class="add btn btn-outline-success" type="submit"><span class="material-symbols-outlined">add</span>New Project</button></a>
   {% endif %}
 </div>
-{% if projects %}
+{% if projects_list %}
 <table class="table">
   <thead>
     <tr>
@@ -31,14 +31,14 @@
     </tr>
   </thead>
   <tbody>
-    {% for project in projects %}
+    {% for project in projects_list %}
     <tr class="project" onclick="window.location='/projects/{{project.pk}}';">
       <td>{{project.name}}</td>
       <td>{{project.org}}</td>
       <td>{{project.created_at}}</td>
       <td>
         {% if perms.analytics.delete_autodeskconstructioncloudproject %}
-            <form id="form-{{project.pk}}" action="{% url 'delete-project' project_pk=project.pk %}" method="post">
+            <form id="form-{{project.pk}}" action="{% url 'delete_project' project_pk=project.pk %}" method="post">
                 {% csrf_token %}
             </form>
             <button class="action btn btn-outline-primary" type="submit" form="form-{{project.pk}}" onclick="return confirm('Are you sure you want to delete {{project.name}}?')"><span class="material-symbols-outlined">delete</span></button>

@@ -13,7 +13,7 @@ def verbose_user(request) -> str:
     return f"{request.user.pk}:{request.user.username}"
 
 @require_http_methods(['GET', 'POST'])
-def user_login(request):
+def login_user(request):
     """Django view for logging a User in."""
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)

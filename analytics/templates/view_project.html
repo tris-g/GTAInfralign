@@ -6,8 +6,8 @@
 {% block head %}<link rel="stylesheet" href="{% static 'css/project.css' %}">{% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
-<li class="breadcrumb-item"><a href="{% url 'projects' %}">Projects</a></li>
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{% url 'view_all_projects' %}">Projects</a></li>
 <li class="breadcrumb-item active" aria-current="page">{{ project.name }}</li>
 {% endblock %}
 

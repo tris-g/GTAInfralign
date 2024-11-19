@@ -15,11 +15,11 @@ def verbose_user(request) -> str:
     return f"{request.user.pk}:{request.user.username}"
 
 @login_required
-def index(request):
-    return render(request, 'index.html', {'username': request.user.username})
+def dashboard(request):
+    return render(request, 'dashboard.html', {'username': request.user.username})
 
 @login_required
-def projects(request):
+def view_all_projects(request):
     if not request.user.has_perm('analytics.view_autodeskconstructioncloudproject'):
         raise PermissionDenied
     can_add_projects = True if request.user.has_perm('analytics.add_autodeskconstructioncloudproject') else False
@@ -27,13 +27,13 @@ def projects(request):
         p = AutodeskConstructionCloudProject.objects.annotate(search=SearchVector('name', 'org'),).filter(search=request.GET.get('search'))
     else:
         p = AutodeskConstructionCloudProject.objects.all()
-    return render(request, 'projects.html', {'can_add_projects': can_add_projects, 'projects': p})
+    return render(request, 'view_all_projects.html', {'projects_list': p})
 
 @login_required
-def project(request, pk):
+def view_project(request, project_pk):
     if not request.user.has_perm('analytics.view_autodeskconstructioncloudproject'):
         raise PermissionDenied
-    return render(request, 'project.html', {'project': AutodeskConstructionCloudProject.objects.get(pk=pk)})
+    return render(request, 'view_project.html', {'project': AutodeskConstructionCloudProject.objects.get(pk=project_pk)})
 
 @login_required
 def add_project(request):
@@ -45,7 +45,7 @@ def add_project(request):
         print(form.errors)
         if form.is_valid():
             proj = form.save()
-            return redirect('projects')
+            return redirect('view_all_projects')
     else:
         form = AutodeskConstructionCloudProjectForm()
     return render(request, "add_project.html", {"form": form})
@@ -58,4 +58,4 @@ def delete_project(request, project_pk):
     proj.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {proj.pk}:{proj.name}.")
     # messages.success(request, f"{software} was deleted successfully.")
-    return redirect('projects')
+    return redirect('view_all_projects')
