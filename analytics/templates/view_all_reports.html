@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reports | Infralign{% endblock %}
+
+{% block head %}<link rel="stylesheet" href="{% static 'css/items.css' %}">{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+<li class="breadcrumb-item active" aria-current="page">Reports</li>
+{% endblock %}
+
+{% block content %}
+<div class="items-header">
+  <form class="search-bar">
+    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-success" type="submit"><span class="material-symbols-outlined">search</span></button>
+  </form>
+  {% if perms.analytics.add_autodeskconstructioncloudproject %}
+    <a href="{% url 'add_report' %}"><button class="add btn btn-outline-success" type="submit"><span class="material-symbols-outlined">add</span>New Report</button></a>
+  {% endif %}
+</div>
+{% if reports_list %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Project</th>
+      <th scope="col">Name</th>
+      <th scope="col">Uploaded</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for report in reports_list %}
+    <tr class="report">
+      <td>{{report.project.name}}</td>
+      <td>{{report.name}}</td>
+      <td>{{report.uploaded_at}}</td>
+      <td>
+        {% if perms.analytics.delete_autodeskconstructioncloudreport %}
+            <form id="form-{{report.pk}}" action="{% url 'delete_report' report_pk=report.pk %}" method="post">
+                {% csrf_token %}
+            </form>
+            <button class="action btn btn-outline-primary" type="submit" form="form-{{report.pk}}" onclick="return confirm('Are you sure you want to delete {{project.name}}?')"><span class="material-symbols-outlined">delete</span></button>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No results.</p>
+{% endif %}
+{% endblock %}
