@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}New Report | Infralign{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{% url 'view_all_reports' %}">Reports</a></li>
+<li class="breadcrumb-item active" aria-current="page">...</li>
+{% endblock %}
+
+{% block content %}
+<form class="form-group" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input class="form-control mb-3" type="text" placeholder="Name" aria-label="Name" name="name">
+    <div class="mb-3">
+        <label for="projectSelector" class="form-label">Choose a project for this report.</label>
+        <select class="form-select" aria-label="project" name="project" id="projectSelector">
+            {% for project in projects_list %}
+            <option value="{{ project.pk }}">{{ project.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-4">
+        <label for="formFile" class="form-label">Please provide the associated excel file below.</label>
+        <input class="form-control" type="file" id="formFile" name='excel_report'>
+    </div>
+    <button class="btn btn-outline-primary" type="submit" for="form-group">Create</button>
+</form>
+{% endblock %}

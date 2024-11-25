@@ -24,10 +24,10 @@ def login_user(request):
                 login(request, user)
                 logger.info(f"{verbose_user(request)} sucessfully logged in.")
                 messages.info(request, f"Welcome {user}.")
-                return redirect('index')
+                return redirect('dashboard')
         logger.info(f"Failed login attempt for {form.cleaned_data.get('username')}.")
     elif request.user.is_authenticated:
-        return redirect('index')
+        return redirect('dashboard')
     else:
         form = AuthenticationForm(request)
     return render(request, "login.html", {"form": form})

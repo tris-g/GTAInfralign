@@ -1,19 +1,19 @@
-.items-header {
+.head {
     display: flex;
     margin-bottom: 10px;
 }
 
-.items-header .add {
+.head .add {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.items-header .add span {
+.head .add span {
     margin-right: 10px;
 }
 
-.items-header a {
+.head a {
     text-decoration: none;
 }
 
@@ -33,11 +33,11 @@
     margin-right: 10px;
 }
 
-.project {
+.item {
     cursor: pointer;
 }
 
-.project button.action {
+.item button.action {
     display: flex;
     align-items: center;
     justify-content: center;

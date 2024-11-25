@@ -3,7 +3,7 @@
 
 {% block title %}Dashboard | Infralign{% endblock %}
 
-{% block head %}<link rel="stylesheet" href="{% static 'css/items.css' %}">{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/bulk_view.css' %}">{% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
@@ -11,9 +11,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="items-header">
+<div class="head">
   <form class="search-bar">
-    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+    <input class="form-control" name="search" placeholder="Search" aria-label="Search">
     <button class="btn btn-outline-success" type="submit"><span class="material-symbols-outlined">search</span></button>
   </form>
   {% if perms.analytics.add_autodeskconstructioncloudproject %}
@@ -32,7 +32,7 @@
   </thead>
   <tbody>
     {% for project in projects_list %}
-    <tr class="project" onclick="window.location='/projects/{{project.pk}}';">
+    <tr class="item" onclick="window.location='/projects/{{project.pk}}';">
       <td>{{project.name}}</td>
       <td>{{project.org}}</td>
       <td>{{project.created_at}}</td>
