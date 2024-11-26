@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.contrib.postgres.search import SearchVector
 from django.http import JsonResponse
+from django.contrib import messages
 
 from .models import AutodeskConstructionCloudProject, AutodeskConstructionCloudReport
 from .forms import AutodeskConstructionCloudProjectForm, AutodeskConstructionCloudReportForm
@@ -41,6 +42,7 @@ def view_project(request, project_pk):
         else:
             report = AutodeskConstructionCloudReport.objects.filter(project=project_pk).latest('uploaded_at')
     except ObjectDoesNotExist:
+        messages.error(request, f"No reports to show.")
         return redirect('view_all_projects')
     other_reports = [r for r in AutodeskConstructionCloudReport.objects.filter(project=project_pk) if r.pk != report.pk]
     return render(request, 'view_project.html', {'project': AutodeskConstructionCloudProject.objects.get(pk=project_pk), 'reports': other_reports, 'report': report})
@@ -51,10 +53,12 @@ def add_project(request):
         raise PermissionDenied
     if request.method == "POST":
         form = AutodeskConstructionCloudProjectForm(data=request.POST)
-        print(form.errors)
         if form.is_valid():
-            proj = form.save()
+            form.save()
+            messages.success(request, "Sucessfully created project.")
             return redirect('view_all_projects')
+        else:
+            messages.error(request, "Incorrect form.")
     else:
         form = AutodeskConstructionCloudProjectForm()
     return render(request, "add_project.html", {"form": form})
@@ -63,10 +67,10 @@ def add_project(request):
 def delete_project(request, project_pk):
     if not request.user.has_perm('analytics.delete_autodeskconstructioncloudproject'):
         raise PermissionDenied
-    proj = AutodeskConstructionCloudProject.objects.get(pk=project_pk)
-    proj.delete()
-    logger.info(f"{verbose_user(request)} sucessfully deleted {proj.pk}:{proj.name}.")
-    # messages.success(request, f"{software} was deleted successfully.")
+    project = AutodeskConstructionCloudProject.objects.get(pk=project_pk)
+    project.delete()
+    logger.info(f"{verbose_user(request)} sucessfully deleted {project.pk}:{project.name}.")
+    messages.success(request, f"{project.name} was deleted successfully.")
     return redirect('view_all_projects')
 
 @login_required
@@ -80,14 +84,17 @@ def view_all_reports(request):
 def add_report(request):
     if not request.user.has_perm('analytics.add_autodeskconstructioncloudreport'):
         raise PermissionDenied
-    if request.method == "POST" and request.FILES.get('excel_report'):
+    if request.method == "POST":
         updated_request = request.POST.copy()
-        updated_request.update({'data': [json_from_excel(request.FILES.get('excel_report'))]})
+        if request.FILES.get('excel_report'):
+            updated_request.update({'data': [json_from_excel(request.FILES.get('excel_report'))]})
         form = AutodeskConstructionCloudReportForm(data=updated_request)
-        print(form.errors)
         if form.is_valid():
-            rep = form.save()
+            form.save()
+            messages.success(request, "Sucessfully created report.")
             return redirect('view_all_reports')
+        else:
+            messages.error(request, "Incorrect form.")
     else:
         form = AutodeskConstructionCloudReportForm()
     return render(request, "add_report.html", {"form": form, 'projects_list': AutodeskConstructionCloudProject.objects.all()})
@@ -96,7 +103,6 @@ def add_report(request):
 def report_data(request, report_pk):
     if not request.user.has_perm('analytics.view_autodeskconstructioncloudreport'):
         raise PermissionDenied
-    print(AutodeskConstructionCloudReport.objects.get(pk=report_pk).data[0])
     return JsonResponse(AutodeskConstructionCloudReport.objects.get(pk=report_pk).data[0])
 
 @login_required
@@ -106,5 +112,5 @@ def delete_report(request, report_pk):
     rep = AutodeskConstructionCloudReport.objects.get(pk=report_pk)
     rep.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {rep.pk}:{rep.name}.")
-    # messages.success(request, f"{software} was deleted successfully.")
+    messages.success(request, f"Report {rep.name} was deleted successfully.")
     return redirect('view_all_reports')
