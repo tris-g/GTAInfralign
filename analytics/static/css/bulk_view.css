@@ -33,10 +33,6 @@
     margin-right: 10px;
 }
 
-.item {
-    cursor: pointer;
-}
-
 .item button.action {
     display: flex;
     align-items: center;
