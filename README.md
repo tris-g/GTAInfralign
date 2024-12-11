@@ -1,5 +1,5 @@
 # Gebler Tooth Architects Infralign
-![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgta-infralign-pr-5.onrender.com%2Fstatic%2Ftesting%2Fcoverage.json&query=totals.percent_covered_display&suffix=%25&logo=python&label=coverage)
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgta-infralign.onrender.com%2Fstatic%2Ftesting%2Fcoverage.json&query=totals.percent_covered_display&suffix=%25&logo=python&label=coverage)
 
 ---
 ## Description
