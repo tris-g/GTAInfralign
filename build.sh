@@ -10,3 +10,7 @@ python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate
+
+# Create coverage files for dynamic stats
+coverage run manage.py test tests/
+coverage json -o static/testing/coverage.json

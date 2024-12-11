@@ -32,11 +32,14 @@
   </thead>
   <tbody>
     {% for project in projects_list %}
-    <tr class="item" onclick="window.location='/projects/{{project.pk}}';">
+    <tr class="item">
       <td>{{project.name}}</td>
       <td>{{project.org}}</td>
       <td>{{project.created_at}}</td>
-      <td>
+      <td class="d-flex">
+        {% if perms.analytics.view_autodeskconstructioncloudproject %}
+            <a class="action btn btn-outline-primary d-flex justify-content-center align-items-center me-1" href="{% url 'view_project' project_pk=project.pk %}"><span class="material-symbols-outlined">analytics</span></a>
+        {% endif %}
         {% if perms.analytics.delete_autodeskconstructioncloudproject %}
             <form id="form-{{project.pk}}" action="{% url 'delete_project' project_pk=project.pk %}" method="post">
                 {% csrf_token %}
