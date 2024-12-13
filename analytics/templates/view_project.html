@@ -118,15 +118,18 @@
 </div>
 <div id="report-data" data-url="{% url 'report_data' report_pk=report.pk %}"></div>
 <script>
+    console.log('CONSTS')
     const STAT_ANIM = 'swing'
     const STAT_ANIM_WAIT_TIME = 4000
     const container = document.getElementById('heatmap-container');
     const cal = new CalHeatmap();
+    console.log('AJAX')
     console.log($("#report-data").attr("data-url"))
     $.ajax({
         url: $("#report-data").attr("data-url"),
         dataType: 'json',
         success: function(dict) {
+            console.log('SUCESS')
             console.log(dict)
             // Populate the cards
             setTimeout(() => {
