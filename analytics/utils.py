@@ -2,6 +2,10 @@ import pandas
 
 from .models import AutodeskConstructionCloudReport
 
+def verbose_user(request) -> str:
+    """Returns a unique string representing the user within the request. Meant for logging purposes."""
+    return f"{request.user.pk}:{request.user.username}"
+
 def convert_to_bytes(size_str):
     """Convert a file size string like '1.3 MB' or '567 KB' to bytes."""
     size_units = {"KB": 1024, "MB": 1024**2, "GB": 1024**3}
