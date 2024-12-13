@@ -106,6 +106,17 @@ def report_data(request, report_pk):
     return JsonResponse(AutodeskConstructionCloudReport.objects.get(pk=report_pk).data[0])
 
 @login_required
+def dash_data(request):
+    num_files = 0; num_data = 0; num_reports = 0
+    for rep in AutodeskConstructionCloudReport.objects.all():
+        file_size_data = json.loads(rep.data[0].get('file_sizes'))
+        num_files += len(file_size_data)
+        num_data += sum(file_size_data)
+        num_reports += 1
+    num_projects = len(AutodeskConstructionCloudProject.objects.all())
+    return JsonResponse({'files': num_files, 'data': num_data, 'projects': num_projects, 'reports': num_reports})
+
+@login_required
 def delete_report(request, report_pk):
     if not request.user.has_perm('analytics.delete_autodeskconstructioncloudreport'):
         raise PermissionDenied
