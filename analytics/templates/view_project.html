@@ -122,7 +122,7 @@
     const STAT_ANIM_WAIT_TIME = 4000
     const container = document.getElementById('heatmap-container');
     const cal = new CalHeatmap();
-
+    console.log($("#report-data").attr("data-url"))
     $.ajax({
         url: $("#report-data").attr("data-url"),
         dataType: 'json',
@@ -302,7 +302,10 @@
                         stacked: true // Ensure the single bar stacks its segments
                     }
                 }
-            }
+            },
+            error: function (request, error) {
+                console.log(error)
+            },
             });
         }})
 </script>
