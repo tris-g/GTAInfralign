@@ -123,21 +123,11 @@
     const container = document.getElementById('heatmap-container');
     const cal = new CalHeatmap();
 
-    $.easing.extremeEaseInOut = function (t) {
-        if (t < 0.5) {
-            // Explosive growth for ease-in (higher power)
-            return Math.pow(2, 15 * t) * Math.pow(t, 12);
-        } else {
-            // Explosive deceleration for ease-out
-            return 1 - Math.pow(2, -15 * (t - 0.5)) * Math.pow(1 - t, 12);
-        }
-    };
-
     $.ajax({
         url: $("#report-data").attr("data-url"),
         dataType: 'json',
         success: function(dict) {
-
+            console.log(dict)
             // Populate the cards
             setTimeout(() => {
                 // Simulating an AJAX response
