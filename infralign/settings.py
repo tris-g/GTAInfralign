@@ -41,16 +41,15 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
+    "accounts.apps.AccountsConfig",
+    "analytics.apps.AnalyticsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "guardian",
     'django_bootstrap5',
-    "accounts.apps.AccountsConfig",
-    "analytics.apps.AnalyticsConfig",
 ]
 
 MIDDLEWARE = [
@@ -149,7 +148,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
-    'guardian.backends.ObjectPermissionBackend',
 )
 
 STATICFILES_FINDERS = [
@@ -166,7 +164,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "console": {
-            "format": "[%(asctime)s] [%(levelname)s] @%(name)s %(message)s",
+            "format": "[%(asctime)s] [%(levelname)s] (@%(name)s) %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S",
         }
     },
