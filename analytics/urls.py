@@ -11,5 +11,6 @@ urlpatterns = [
     path('reports', views.view_all_reports, name='view_all_reports'),
     path('reports/new', views.add_report, name='add_report'),
     path('reports/<int:report_pk>/delete', views.delete_report, name='delete_report'),
-    path('reports/data/<int:report_pk>', views.report_data, name='report_data'),
+    path('data/report/<int:report_pk>', views.report_data, name='report_data'),
+    path('data/dash', views.dash_data, name='dash_data'),
 ]

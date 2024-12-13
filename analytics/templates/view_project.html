@@ -5,7 +5,7 @@
 
 {% block head %}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="https://d3js.org/d3.v6.js"></script>
+<script src="https://d3js.org/d3.v6.min.js"></script>
 <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
 
@@ -14,7 +14,9 @@
 <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
 <script src="https://unpkg.com/cal-heatmap/dist/plugins/CalendarLabel.min.js"></script>
 
-<link rel="stylesheet" href="{% static 'css/project.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-animateNumber/0.0.14/jquery.animateNumber.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -24,55 +26,138 @@
 {% endblock %}
 
 {% block content %}
-<h3>{{ project.name }}</h3>
-<form class="d-flex mb-3">
-    <select class="form-select me-2" aria-label="select-report" name="report">
-        <option selected value="{{ report.pk }}">{{ report.name }}</option>
-        {% for report_ in reports %}
-        <option value="{{ report_.pk }}">{{ report_.name }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-secondary d-flex justify-content-center align-items-center"><span class="material-symbols-outlined">search</span></button>
-</form>
-
 <div class="container-fluid">
-    <div id="ex-ghDay" class="row overflow-hidden"></div>
-    <div class="row row-cols-auto mt-3">
+    <div class="row">
         <div class="col">
-            <button class="btn btn-sm btn-secondary" onclick="event.preventDefault(); cal.previous();">&lt; Previous</button>
-            <button class="btn btn-sm btn-secondary" href="#" onclick="event.preventDefault(); cal.next();">Next &gt;</button>
+            <h3>{{ project.name }}</h3>
         </div>
-        <div class="col" style="display: flex; align-items: center; border-style: solid; border-color: #ededed; border-radius: 5px;">
-            <span>Less</span>
-            <div id="ex-ghDay-legend" class="ms-2"></div>
-            <span class="ms-2">More</span>
+        <form class="col d-flex">
+            <select class="form-select me-2" aria-label="select-report" name="report">
+                <option selected value="{{ report.pk }}">{{ report.name }}</option>
+                {% for report_ in reports %}
+                <option value="{{ report_.pk }}">{{ report_.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-secondary d-flex justify-content-center align-items-center"><span class="material-symbols-outlined">search</span></button>
+        </form>
+    </div>
+    <div class="row mt-2 g-2">
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="file-num">0</h4><h4>&nbsp;files loaded.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="file-size">0</h4><h4>GB analysed.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="d-num">0</h4><h4>&nbsp;deliverables.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="nd-num">0</h4><h4>&nbsp;non-deliverables.</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <h4 class="card-header">Activity</h4>
+                <div class="card-body">
+                    <div id="heatmap-container" class="responsive-heatmap p-2">
+                        <div id="cal-heatmap"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row row-cols-auto">
+                        <div class="col">
+                            <button class="btn btn-sm btn-secondary" onclick="event.preventDefault(); cal.previous();">&lt; Previous</button>
+                            <button class="btn btn-sm btn-secondary" href="#" onclick="event.preventDefault(); cal.next();">Next &gt;</button>
+                        </div>
+                        <div class="col" style="display: flex; align-items: center; border-style: solid; border-color: #ededed; border-radius: 5px;">
+                            <span>Less</span>
+                            <div id="cal-heatmap-legend" class="ms-2"></div>
+                            <span class="ms-2">More</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="card">
+                <h4 class="card-header">Statuses</h4>
+                <div class="card-body">
+                    <canvas id="status-chart" style="width: 100%; height: 100px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="card">
+                <h4 class="card-header">Versions</h4>
+                <div class="card-body">
+                    <canvas id="version-chart" style="width: 100%; height: 100px;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <div id="report-data" data-url="{% url 'report_data' report_pk=report.pk %}"></div>
-
 <script>
+    const STAT_ANIM = 'swing'
+    const STAT_ANIM_WAIT_TIME = 4000
+    const container = document.getElementById('heatmap-container');
     const cal = new CalHeatmap();
-
     $.ajax({
         url: $("#report-data").attr("data-url"),
         dataType: 'json',
         success: function(dict) {
+            // Populate the cards
+            setTimeout(() => {
+                // Simulating an AJAX response
+                const fileNumber = JSON.parse(dict.file_sizes).length;
+                $('#file-num').animateNumber({ number: fileNumber, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+                const sizeNumber = (JSON.parse(dict.file_sizes).reduce((partialSum, a) => partialSum + a, 0) / 1e+9).toFixed(1);
+                $('#file-size').animateNumber({ number: sizeNumber, easing: STAT_ANIM, numberStep: function (now, tween) {
+                        // Format the number with one decimal place
+                        $(tween.elem).text(now.toFixed(1));
+                    }}, STAT_ANIM_WAIT_TIME);
+                $('#d-num').animateNumber({ number: JSON.parse(dict.deliverables)[0].value, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+                $('#nd-num').animateNumber({ number: JSON.parse(dict.deliverables)[1].value, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+            }, 500);
+            
+            const dateData = JSON.parse(dict.last_updated)
+            // Paint the activity heatmap (cal-heatmap)
             cal.paint(
             {
                 data: {
-                    source: JSON.parse(dict.last_updated),
+                    source: dateData,
                     type: 'json',
                     x: 'date',
                     y: 'value',
                 },
-                date: { start: new Date('2023-05-01') },
-                range: 48,
+                date: { start: new Date(dateData[0].date) },
+                range: 12,
                 scale: {
                     color: {
                         type: 'threshold',
                         scheme: 'oranges',
-                        domain: [10, 25, 50, 100, 1000],
+                        domain: [1, 2, 5, 10, 25, 100],
                 },
                 },
                 domain: {
@@ -80,8 +165,8 @@
                     gutter: 4,
                     label: { text: 'MMM', textAlign: 'start', position: 'top' },
                 },
-                subDomain: { type: 'ghDay', radius: 2, width: 14, height: 14, gutter: 4 },
-                itemSelector: '#ex-ghDay',
+                subDomain: { type: 'ghDay', radius: 2, width: container.offsetWidth / 61, height: 14, gutter: 4 },
+                itemSelector: '#cal-heatmap',
             },
             [
                 [
@@ -100,7 +185,7 @@
                 LegendLite,
                 {
                     includeBlank: true,
-                    itemSelector: '#ex-ghDay-legend',
+                    itemSelector: '#cal-heatmap-legend',
                     radius: 2,
                     width: 14,
                     height: 14,
@@ -118,6 +203,109 @@
                 ],
             ]
             );
+            // Extract labels and values from the data
+            const statusData = JSON.parse(dict.statuses)
+            // statusData.sort((a, b) => parseFloat(a.version) - parseFloat(b.version));
+
+            // Generate a random color for each version
+            const statusColors = statusData.map(() => {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return `rgba(${r}, ${g}, ${b}, 0.7)`; // Semi-transparent random color
+            });
+
+            // Create the chart
+            const statusCtx = document.getElementById('status-chart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['All Statuses'], // Single stack label
+                    datasets: statusData.map((item, index) => ({
+                        label: `Status ${item.status}`,
+                        data: [item.value], // Each dataset represents one version
+                        backgroundColor: statusColors[index]
+                    }))
+                },
+                options: {
+                indexAxis: 'y', // Makes the bar horizontal
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Hides the legend
+                    },
+                    tooltip: {
+                        enabled: true // Keep tooltips enabled
+                    }
+                },
+                scales: {
+                    x: {
+                        display: false, // Hide the x-axis scale
+                        grid: {
+                            display: false // Remove gridlines for the x-axis
+                        },
+                        stacked: true // Stack values horizontally
+                    },
+                    y: {
+                        display: false,
+                        stacked: true // Ensure the single bar stacks its segments
+                    }
+                }
+            }
+            });
+            // Extract labels and values from the data
+            const versionData = JSON.parse(dict.versions)
+            versionData.sort((a, b) => parseFloat(a.version) - parseFloat(b.version));
+
+            // Generate a random color for each version
+            const versionColors = versionData.map(() => {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return `rgba(${r}, ${g}, ${b}, 0.7)`; // Semi-transparent random color
+            });
+
+            // Create the chart
+            const versionCtx = document.getElementById('version-chart').getContext('2d');
+            new Chart(versionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['All Versions'], // Single stack label
+                    datasets: versionData.map((item, index) => ({
+                        label: `Version ${item.version}`,
+                        data: [item.value], // Each dataset represents one version
+                        backgroundColor: versionColors[index]
+                    }))
+                },
+                options: {
+                indexAxis: 'y', // Makes the bar horizontal
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Hides the legend
+                    },
+                    tooltip: {
+                        enabled: true // Keep tooltips enabled
+                    }
+                },
+                scales: {
+                    x: {
+                        display: false, // Hide the x-axis scale
+                        grid: {
+                            display: false // Remove gridlines for the x-axis
+                        },
+                        stacked: true // Stack values horizontally
+                    },
+                    y: {
+                        display: false,
+                        stacked: true // Ensure the single bar stacks its segments
+                    }
+                }
+            },
+            error: function (request, error) {
+                alert(error)
+            },
+            });
         }})
 </script>
 {% endblock %}

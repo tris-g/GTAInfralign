@@ -24,6 +24,7 @@ def login_user(request):
                 login(request, user)
                 logger.info(f"{verbose_user(request)} sucessfully logged in.")
                 messages.info(request, f"Welcome {user}.")
+                messages.warning(request, f"Please note that this application is for Desktop usage.")
                 return redirect('dashboard')
         logger.info(f"Failed login attempt for {form.cleaned_data.get('username')}.")
     elif request.user.is_authenticated:

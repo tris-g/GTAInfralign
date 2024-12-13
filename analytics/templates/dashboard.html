@@ -2,10 +2,73 @@
 
 {% block title %}Dashboard | Infralign{% endblock %}
 
+{% block head %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-animateNumber/0.0.14/jquery.animateNumber.min.js"></script>
+{% endblock %}
+
 {% block breadcrumb %}
 <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
 {% endblock breadcrumb %}
 
 {% block content %}
-<h3>Welcome {{ username }}</h3>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h3>Welcome {{ username }}</h3>
+        </div>
+    </div>
+    <div class="row mt-1 g-2">
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="file-num">0</h4><h4>&nbsp;files loaded.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="file-size">0</h4><h4>GB analysed.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="project-num">0</h4><h4>&nbsp;projects.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <h4 id="report-num">0</h4><h4>&nbsp;reports.</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="data" data-url="{% url 'dash_data' %}"></div>
+<script>
+    const STAT_ANIM = 'swing'
+    const STAT_ANIM_WAIT_TIME = 4000
+
+    $.ajax({
+        url: $("#data").attr("data-url"),
+        dataType: 'json',
+        success: function(dict) {
+            // Populate the cards
+            setTimeout(() => {
+                // Simulating an AJAX response
+                $('#file-num').animateNumber({ number: dict.files, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+                $('#file-size').animateNumber({ number: (dict.data / 1e+9).toFixed(1), easing: STAT_ANIM, numberStep: function (now, tween) {
+                        // Format the number with one decimal place
+                        $(tween.elem).text(now.toFixed(1));
+                    }}, STAT_ANIM_WAIT_TIME);
+                $('#project-num').animateNumber({ number: dict.projects, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+                $('#report-num').animateNumber({ number: dict.reports, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+            }, 500);
+        }});
+</script>
 {% endblock content %}
