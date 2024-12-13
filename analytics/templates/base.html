@@ -77,6 +77,18 @@
                 {{ message }}
                 </div>
             </div>
+            {% elif message.tags == 'warning' %}
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                <span class="material-symbols-outlined me-1" style="color: orange">report</span>
+                <strong class="me-auto">Warning</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                {{ message }}
+                </div>
+            </div>
             {% elif message.tags == 'error' %}
             <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
