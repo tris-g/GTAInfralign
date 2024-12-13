@@ -5,6 +5,7 @@
 
 {% block head %}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3.v6.min.js"></script>
 <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
 
@@ -118,19 +119,14 @@
 </div>
 <div id="report-data" data-url="{% url 'report_data' report_pk=report.pk %}"></div>
 <script>
-    console.log('CONSTS')
     const STAT_ANIM = 'swing'
     const STAT_ANIM_WAIT_TIME = 4000
     const container = document.getElementById('heatmap-container');
     const cal = new CalHeatmap();
-    console.log('AJAX')
-    console.log($("#report-data").attr("data-url"))
     $.ajax({
         url: $("#report-data").attr("data-url"),
         dataType: 'json',
         success: function(dict) {
-            console.log('SUCESS')
-            console.log(dict)
             // Populate the cards
             setTimeout(() => {
                 // Simulating an AJAX response
@@ -307,7 +303,7 @@
                 }
             },
             error: function (request, error) {
-                console.log(error)
+                alert(error)
             },
             });
         }})
