@@ -1,6 +1,6 @@
 import logging, json
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.postgres.search import SearchVector
@@ -60,7 +60,7 @@ def add_project(request):
 @login_required
 @permission_required('analytics.delete_autodeskconstructioncloudproject', 'view_all_projects')
 def delete_project(request, project_pk):
-    project = AutodeskConstructionCloudProject.objects.get(pk=project_pk)
+    project = get_object_or_404(AutodeskConstructionCloudProject, pk=project_pk)
     project.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {project.pk}:{project.name}.")
     messages.success(request, f"{project.name} was deleted successfully.")
@@ -93,7 +93,7 @@ def add_report(request):
 @login_required
 @permission_required('analytics.delete_autodeskconstructioncloudreport', 'view_all_reports')
 def delete_report(request, report_pk):
-    rep = AutodeskConstructionCloudReport.objects.get(pk=report_pk)
+    rep = get_object_or_404(AutodeskConstructionCloudReport, pk=report_pk)
     rep.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {rep.pk}:{rep.name}.")
     messages.success(request, f"Report {rep.name} was deleted successfully.")
