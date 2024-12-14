@@ -33,7 +33,7 @@ def view_all_projects(request):
 def view_project(request, project_pk):
     try:
         if request.GET.get('report'):
-            report = AutodeskConstructionCloudReport.objects.get(pk=request.GET.get('report'), project=project_pk)
+            report = get_object_or_404(AutodeskConstructionCloudProject, pk=request.GET.get('report'))
         else:
             report = AutodeskConstructionCloudReport.objects.filter(project=project_pk).latest('uploaded_at')
     except ObjectDoesNotExist:
