@@ -64,6 +64,7 @@ def delete_project(request, project_pk):
     project.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {project.pk}:{project.name}.")
     messages.success(request, f"{project.name} was deleted successfully.")
+    return redirect('view_all_projects')
 
 @login_required
 @permission_required('analytics.view_autodeskconstructioncloudreport', 'dashboard')
@@ -84,7 +85,7 @@ def add_report(request):
             messages.success(request, "Sucessfully created report.")
             return redirect('view_all_reports')
         else:
-            messages.error(request, "Incorrect form.")
+            messages.error(request, f"Incorrect form. {form.errors}")
     else:
         form = AutodeskConstructionCloudReportForm()
     return render(request, "add_report.html", {"form": form, 'projects_list': AutodeskConstructionCloudProject.objects.all()})
@@ -96,6 +97,7 @@ def delete_report(request, report_pk):
     rep.delete()
     logger.info(f"{verbose_user(request)} sucessfully deleted {rep.pk}:{rep.name}.")
     messages.success(request, f"Report {rep.name} was deleted successfully.")
+    return redirect('view_all_reports')
 
 @login_required
 @permission_required('analytics.view_autodeskconstructioncloudreport')
@@ -106,7 +108,7 @@ def report_data(request, report_pk):
 def dash_data(request):
     num_files = 0; num_data = 0; num_reports = 0
     for rep in AutodeskConstructionCloudReport.objects.all():
-        file_size_data = json.loads(rep.data[0].get('file_sizes'))
+        file_size_data = rep.data[0].get('file_sizes').values()
         num_files += len(file_size_data)
         num_data += sum(file_size_data)
         num_reports += 1
