@@ -36,7 +36,10 @@
       <td>{{report.project.name}}</td>
       <td>{{report.name}}</td>
       <td>{{report.uploaded_at}}</td>
-      <td>
+      <td class="d-flex">
+        {% if perms.analytics.change_autodeskconstructioncloudreport %}
+          <a class="action btn btn-outline-primary d-flex justify-content-center align-items-center me-1" href="{% url 'update_report' report_pk=report.pk %}"><span class="material-symbols-outlined">edit_note</span></a>
+        {% endif %}
         {% if perms.analytics.delete_autodeskconstructioncloudreport %}
             <form id="form-{{report.pk}}" action="{% url 'delete_report' report_pk=report.pk %}" method="post">
                 {% csrf_token %}
