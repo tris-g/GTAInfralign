@@ -1,6 +1,8 @@
-import pandas, json
+import logging, pandas
 
-from .models import AutodeskConstructionCloudReport
+from django.contrib import messages
+
+logger = logging.getLogger(__name__)
 
 ALLOWED_FIELDS = ['Last updated', 'File size', 'RIBA Stage', 'Version number', 'Status', 'Deliverable']
 STATUS_ORDER = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'S0', 'S1', 'S2', 'S3', 'S4', 'S5']
@@ -8,6 +10,12 @@ STATUS_ORDER = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'S0', 'S1', 'S2', 'S3', 'S4'
 def verbose_user(request) -> str:
     """Returns a unique string representing the user within the request. Meant for logging purposes."""
     return f"{request.user.pk}:{request.user.username}"
+
+def log_form_errors(form, request):
+    for field, errors in form.errors.get_json_data().items():
+        for error in errors:
+            logger.debug(f"[{verbose_user(request)}] [Form Error] {field}: {error['message']}")
+            messages.error(request, f"{field}: {error['message']}")
 
 def convert_to_bytes(size_str: str):
     """Convert a file size string like '1.3 MB' or '567 KB' to bytes."""
