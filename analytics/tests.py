@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from .models import AutodeskConstructionCloudProject, AutodeskConstructionCloudReport
+from .utils import json_from_excel
 
 PERMISSION_MODELS = [
     'autodeskconstructioncloudproject',
@@ -23,14 +24,7 @@ PERMISSION_CODENAMES= [
     'delete_autodeskconstructioncloudreport',
 ]
 
-SAMPLE_REPORT_DATA = json.dumps([{
-    'last_updated': [{'date': 1670803200000, 'value': 1}],
-    'file_sizes': [{0: 86612377}],
-    'deliverables': [{'deliverable': 'D', 'value': 10}, {'deliverable': 'ND', 'value': 2}],
-    'statuses': [{'status': 'A0', 'value': 3}],
-    'riba_stages': [{'stage': 1, 'value': 5}],
-    'versions': [{'version': 2, 'value': 1}],
-}])
+SAMPLE_REPORT_DATA = json.dumps([json_from_excel('static/testing/.xlsx')])
 
 class TestAnalytics(TestCase):
     def setUp(self):
@@ -150,6 +144,26 @@ class TestAnalytics(TestCase):
         self.assertRedirects(response, reverse('view_all_reports'))
         self.assertEqual(AutodeskConstructionCloudReport.objects.count(), 2) # Still only two reports should exist
         self.assertFalse(AutodeskConstructionCloudReport.objects.filter(project=self.project.pk, name='Bad report').exists())
+
+    def test_update_project(self):
+        self.client.force_login(self.good_user)
+        response = self.client.get(reverse('update_project', kwargs={'project_pk': self.project.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Project")
+        response = self.client.post(reverse('update_project', kwargs={'project_pk': self.project.pk}), {'name': 'Updated Project', 'org': self.project.org})
+        self.assertEqual(response.status_code, 302)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.name, 'Updated Project')
+
+    def test_update_report(self):
+        self.client.force_login(self.good_user)
+        response = self.client.get(reverse('update_report', kwargs={'report_pk': self.report.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Report")
+        response = self.client.post(reverse('update_report', kwargs={'report_pk': self.report.pk}), {'name': 'Updated Report', 'project': self.report.project.pk, 'data': self.report.data})
+        self.assertEqual(response.status_code, 302)
+        self.report.refresh_from_db()
+        self.assertEqual(self.report.name, 'Updated Report')
     
     def test_delete_project(self):
         self.client.force_login(self.good_user)
