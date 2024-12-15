@@ -56,7 +56,7 @@ def add_project(request):
         else:
             for field, errors in form.errors.get_json_data().items():
                 for error in errors:
-                    logger.debug(f'[{verbose_user(request)}] [Form Error] {field}: {error['message']}')
+                    logger.debug(f"[{verbose_user(request)}] [Form Error] {field}: {error['message']}")
                     messages.error(request, f"{field}: {error['message']}")
     else:
         form = AutodeskConstructionCloudProjectForm()
@@ -93,7 +93,7 @@ def add_report(request):
         else:
             for field, errors in form.errors.get_json_data().items():
                 for error in errors:
-                    logger.debug(f'[{verbose_user(request)}] [Form Error] {field}: {error['message']}')
+                    logger.debug(f"[{verbose_user(request)}] [Form Error] {field}: {error['message']}")
                     messages.error(request, f"{field}: {error['message']}")
     else:
         form = AutodeskConstructionCloudReportForm()
