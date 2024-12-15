@@ -121,7 +121,7 @@ def update_report(request, report_pk):
 
     if request.method == "POST":
         # Bind form data to the instance
-        post_data = request.POST
+        post_data = request.POST.copy()
         post_data.update({'data': report.data})
         form = AutodeskConstructionCloudReportForm(post_data, instance=report)
         if form.is_valid():
