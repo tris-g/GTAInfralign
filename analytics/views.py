@@ -1,4 +1,4 @@
-import logging, json
+import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -31,16 +31,17 @@ def view_all_projects(request):
 @login_required
 @permission_required('analytics.view_autodeskconstructioncloudproject', 'dashboard')
 def view_project(request, project_pk):
-    try:
-        if request.GET.get('report'):
-            report = get_object_or_404(AutodeskConstructionCloudProject, pk=request.GET.get('report'))
-        else:
+    report_pk = request.GET.get('report')
+    if request.GET.get('report'):
+        report = get_object_or_404(AutodeskConstructionCloudProject, pk=report_pk)
+    else:
+        try:
             report = AutodeskConstructionCloudReport.objects.filter(project=project_pk).latest('uploaded_at')
-    except ObjectDoesNotExist:
-        messages.error(request, f"No reports to show.")
-        return redirect('view_all_projects')
-    other_reports = [r for r in AutodeskConstructionCloudReport.objects.filter(project=project_pk) if r.pk != report.pk]
-    return render(request, 'view_project.html', {'project': AutodeskConstructionCloudProject.objects.get(pk=project_pk), 'reports': other_reports, 'report': report})
+        except ObjectDoesNotExist:
+            logger.debug(f'No reports found for {project_pk}.')
+            messages.warning(request, "No reports to show.")
+            return redirect('view_all_projects')
+    return render(request, 'view_project.html', {'project': AutodeskConstructionCloudProject.objects.get(pk=project_pk), 'reports': AutodeskConstructionCloudReport.objects.exclude(pk=report_pk), 'report': report})
 
 @login_required
 @permission_required('analytics.add_autodeskconstructioncloudproject', 'view_all_projects')
@@ -48,11 +49,15 @@ def add_project(request):
     if request.method == "POST":
         form = AutodeskConstructionCloudProjectForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            project = form.save()
+            logger.info(f"[{verbose_user(request)}] created {project.pk}:{project.name}.")
             messages.success(request, "Sucessfully created project.")
             return redirect('view_all_projects')
         else:
-            messages.error(request, "Incorrect form.")
+            for field, errors in form.errors.get_json_data().items():
+                for error in errors:
+                    logger.debug(f'[{verbose_user(request)}] [Form Error] {field}: {error['message']}')
+                    messages.error(request, f"{field}: {error['message']}")
     else:
         form = AutodeskConstructionCloudProjectForm()
     return render(request, "add_project.html", {"form": form})
@@ -62,7 +67,7 @@ def add_project(request):
 def delete_project(request, project_pk):
     project = get_object_or_404(AutodeskConstructionCloudProject, pk=project_pk)
     project.delete()
-    logger.info(f"{verbose_user(request)} sucessfully deleted {project.pk}:{project.name}.")
+    logger.info(f"[{verbose_user(request)}] deleted {project.name}.")
     messages.success(request, f"{project.name} was deleted successfully.")
     return redirect('view_all_projects')
 
@@ -81,11 +86,15 @@ def add_report(request):
             updated_request.update({'data': [json_from_excel(request.FILES.get('excel_report'))]})
         form = AutodeskConstructionCloudReportForm(data=updated_request)
         if form.is_valid():
-            form.save()
+            report = form.save()
+            logger.info(f"[{verbose_user(request)}] created {report.pk}:{report.name}.")
             messages.success(request, "Sucessfully created report.")
             return redirect('view_all_reports')
         else:
-            messages.error(request, f"Incorrect form. {form.errors}")
+            for field, errors in form.errors.get_json_data().items():
+                for error in errors:
+                    logger.debug(f'[{verbose_user(request)}] [Form Error] {field}: {error['message']}')
+                    messages.error(request, f"{field}: {error['message']}")
     else:
         form = AutodeskConstructionCloudReportForm()
     return render(request, "add_report.html", {"form": form, 'projects_list': AutodeskConstructionCloudProject.objects.all()})
@@ -95,7 +104,7 @@ def add_report(request):
 def delete_report(request, report_pk):
     rep = get_object_or_404(AutodeskConstructionCloudReport, pk=report_pk)
     rep.delete()
-    logger.info(f"{verbose_user(request)} sucessfully deleted {rep.pk}:{rep.name}.")
+    logger.info(f"[{verbose_user(request)}] deleted {rep.pk}:{rep.name}.")
     messages.success(request, f"Report {rep.name} was deleted successfully.")
     return redirect('view_all_reports')
 
