@@ -12,5 +12,5 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 # Create coverage files for dynamic stats
-coverage run manage.py test tests/
+coverage run manage.py test
 coverage json -o static/testing/coverage.json
