@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Update Project | Infralign{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{% url 'view_all_reports' %}">Projects</a></li>
+<li class="breadcrumb-item active" aria-current="page">...</li>
+{% endblock %}
+
+{% block content %}
+<form class="form-group" action="" method="post">
+    {% csrf_token %}
+    <div class="form-floating mb-3">
+        <input type="name" name="name" class="form-control" id="floatingInput" placeholder="name" value="{{ form.name.value }}">
+        <label for="floatingInput">Name</label>
+    </div>
+    <div class="form-floating mb-4">
+        <input type="org" name="org" class="form-control" id="floatingInput" placeholder="org" value="{{ form.org.value }}">
+        <label for="floatingInput">Organisation</label>
+    </div>
+    <button class="btn btn-outline-primary" type="submit" for="form-group">Update</button>
+</form>
+{% endblock %}
