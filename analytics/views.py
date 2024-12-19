@@ -2,6 +2,7 @@ import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.postgres.search import SearchVector
 from django.http import JsonResponse
@@ -16,10 +17,12 @@ from .utils import verbose_user, log_form_errors, json_from_excel
 logger = logging.getLogger(__name__)
 
 @login_required
+@require_http_methods(['GET'])
 def dashboard(request):
     return render(request, 'dashboard.html', {'username': request.user.username})
 
 @login_required
+@require_http_methods(['GET'])
 @permission_required('analytics.view_autodeskconstructioncloudproject', 'dashboard')
 def view_all_projects(request):
     if request.GET.get('search'):
@@ -29,6 +32,7 @@ def view_all_projects(request):
     return render(request, 'view_all_projects.html', {'projects_list': p})
 
 @login_required
+@require_http_methods(['GET'])
 @permission_required('analytics.view_autodeskconstructioncloudproject', 'dashboard')
 def view_project(request, project_pk):
     project = get_object_or_404(AutodeskConstructionCloudProject, pk=project_pk)
@@ -44,6 +48,7 @@ def view_project(request, project_pk):
     return render(request, 'view_project.html', {'project': project, 'reports': AutodeskConstructionCloudReport.objects.exclude(pk=report.pk), 'report': report})
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 @permission_required('analytics.add_autodeskconstructioncloudproject', 'view_all_projects')
 def add_project(request):
     if request.method == "POST":
@@ -60,6 +65,7 @@ def add_project(request):
     return render(request, "add_project.html", {"form": form})
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 @permission_required('analytics.change_autodeskconstructioncloudproject', 'view_all_projects')
 def update_project(request, project_pk):
     # Fetch the instance to update
@@ -80,6 +86,7 @@ def update_project(request, project_pk):
     return render(request, 'update_project.html', {'form': form, 'project': project})
 
 @login_required
+@require_http_methods(['GET'])
 @permission_required('analytics.delete_autodeskconstructioncloudproject', 'view_all_projects')
 def delete_project(request, project_pk):
     project = get_object_or_404(AutodeskConstructionCloudProject, pk=project_pk)
@@ -89,12 +96,14 @@ def delete_project(request, project_pk):
     return redirect('view_all_projects')
 
 @login_required
+@require_http_methods(['GET'])
 @permission_required('analytics.view_autodeskconstructioncloudreport', 'dashboard')
 def view_all_reports(request):
     r = AutodeskConstructionCloudReport.objects.all()
     return render(request, 'view_all_reports.html', {'reports_list': r})
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 @permission_required('analytics.add_autodeskconstructioncloudreport', 'view_all_reports')
 def add_report(request):
     if request.method == "POST":
@@ -114,6 +123,7 @@ def add_report(request):
     return render(request, "add_report.html", {"form": form, 'projects_list': AutodeskConstructionCloudProject.objects.all()})
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 @permission_required('analytics.change_autodeskconstructioncloudreport', 'view_all_reports')
 def update_report(request, report_pk):
     # Fetch the instance to update
@@ -137,6 +147,7 @@ def update_report(request, report_pk):
     return render(request, 'update_report.html', {'form': form, 'report': report})
 
 @login_required
+@require_http_methods(['GET'])
 @permission_required('analytics.delete_autodeskconstructioncloudreport', 'view_all_reports')
 def delete_report(request, report_pk):
     rep = get_object_or_404(AutodeskConstructionCloudReport, pk=report_pk)
@@ -146,11 +157,13 @@ def delete_report(request, report_pk):
     return redirect('view_all_reports')
 
 @login_required
+@require_http_methods(['GET'])
 @permission_required('analytics.view_autodeskconstructioncloudreport')
 def report_data(request, report_pk):
     return JsonResponse(AutodeskConstructionCloudReport.objects.get(pk=report_pk).data[0])
 
 @login_required
+@require_http_methods(['GET'])
 def dash_data(request):
     num_files = 0; num_data = 0; num_reports = 0
     for rep in AutodeskConstructionCloudReport.objects.all():
