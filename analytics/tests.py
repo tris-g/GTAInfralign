@@ -155,7 +155,7 @@ class TestAnalytics(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('view_all_reports'))
-        self.assertEqual(AutodeskConstructionCloudReport.objects.count(), 2)
+        self.assertEqual(AutodeskConstructionCloudReport.objects.count(), 1)
         self.assertFalse(AutodeskConstructionCloudReport.objects.filter(project=self.project.pk, name='Bad report').exists())
 
     def test_update_project(self):

@@ -86,7 +86,7 @@ def update_project(request, project_pk):
     return render(request, 'update_project.html', {'form': form, 'project': project})
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'POST'])
 @permission_required('analytics.delete_autodeskconstructioncloudproject', 'view_all_projects')
 def delete_project(request, project_pk):
     project = get_object_or_404(AutodeskConstructionCloudProject, pk=project_pk)
@@ -147,7 +147,7 @@ def update_report(request, report_pk):
     return render(request, 'update_report.html', {'form': form, 'report': report})
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'POST'])
 @permission_required('analytics.delete_autodeskconstructioncloudreport', 'view_all_reports')
 def delete_report(request, report_pk):
     rep = get_object_or_404(AutodeskConstructionCloudReport, pk=report_pk)
