@@ -55,7 +55,7 @@ def add_project(request):
         form = AutodeskConstructionCloudProjectForm(data=request.POST)
         if form.is_valid():
             project = form.save()
-            logger.info(f"[{verbose_user(request)}] created {project.pk}:{project.name}.")
+            logger.info(f"{verbose_user(request)} created {project.pk}:{project.name}.")
             messages.success(request, "Sucessfully created project.")
             return redirect('view_all_projects')
         else:

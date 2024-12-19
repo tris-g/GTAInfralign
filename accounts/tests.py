@@ -1,5 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from .forms import UserRegisterForm, AuthenticationForm
 
@@ -19,3 +20,12 @@ class TestForms(TestCase):
         form = AuthenticationForm(self.client.request(), data={'username': self.test_username, 'password': self.test_password})
         self.assertTrue(form.is_valid())
         self.assertTrue(self.client.login(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password')))
+    
+    def test_login(self):
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_login_post(self):
+        response = self.client.post(reverse('login'), {'username': self.test_username, 'password': self.test_password})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('dashboard'))

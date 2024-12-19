@@ -5,12 +5,9 @@ from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
 from .forms import AuthenticationForm
+from analytics.utils import verbose_user
 
 logger = logging.getLogger(__name__)
-
-def verbose_user(request) -> str:
-    """Returns a unique string representing the user within the request. Meant for logging purposes."""
-    return f"{request.user.pk}:{request.user.username}"
 
 @require_http_methods(['GET', 'POST'])
 def login_user(request):

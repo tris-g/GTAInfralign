@@ -9,7 +9,7 @@ STATUS_ORDER = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'S0', 'S1', 'S2', 'S3', 'S4'
 
 def verbose_user(request) -> str:
     """Returns a unique string representing the user within the request. Meant for logging purposes."""
-    return f"{request.user.pk}:{request.user.username}"
+    return f"[{request.user.pk}:{request.user.username}]"
 
 def log_form_errors(form, request):
     for field, errors in form.errors.get_json_data().items():
