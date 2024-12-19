@@ -64,4 +64,11 @@
     </div>
     {% endif %}
 </body>
+<!-- Script for Bootstrap toasts https://getbootstrap.com/docs/5.0/components/toasts/ -->
+<script>
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+    var toastList = toastElList.map(function (toastEl) {
+        new bootstrap.Toast(toastEl).show()
+    });
+</script>
 </html>
