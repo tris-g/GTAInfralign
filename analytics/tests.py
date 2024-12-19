@@ -103,6 +103,8 @@ class TestAnalytics(TestCase):
         self.client.force_login(self.bad_user)
         response = self.client.post(reverse('add_project'), {'name': 'Bad project', 'org': 'Bad organisation'})
         self.assertRedirects(response, reverse('view_all_projects'))
+        self.assertEqual(AutodeskConstructionCloudProject.objects.count(), 1)
+        self.assertFalse(AutodeskConstructionCloudProject.objects.filter(name='Bad project', org='Bad organisation').exists())
         self.bad_user.user_permissions.remove(view_permission)
 
     def test_add_report(self):
