@@ -5,7 +5,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
 from .forms import AuthenticationForm
-from analytics.utils import verbose_user
+from analytics.utils import verbose_user, log_form_errors
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,6 @@ def login_user(request):
     """Django view for logging a User in."""
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
-        print(form.error_messages)
         if form.is_valid():
             user = authenticate(request, username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
             if user is not None:
@@ -23,7 +22,9 @@ def login_user(request):
                 messages.info(request, f"Welcome {user}.")
                 messages.warning(request, f"Please note that this application is for Desktop usage.")
                 return redirect('dashboard')
-        logger.info(f"Failed login attempt for {form.cleaned_data.get('username')}.")
+        else:
+            logger.info(f"Failed login attempt for {form.cleaned_data.get('username')}.")
+            log_form_errors(form, request)
     elif request.user.is_authenticated:
         return redirect('dashboard')
     else:
