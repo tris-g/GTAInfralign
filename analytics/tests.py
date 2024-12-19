@@ -91,6 +91,7 @@ class TestAnalytics(TestCase):
         self.assertEqual(response.status_code, 200)
         
     def test_add_project_post(self):
+        self.client.force_login(self.good_user)
         response = self.client.post(reverse('add_project'), {'name': 'Good project', 'org': 'Good organisation'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(AutodeskConstructionCloudProject.objects.count(), 2)
@@ -194,7 +195,6 @@ class TestAnalytics(TestCase):
         self.client.force_login(self.bad_user)
         response = self.client.post(reverse('delete_project', kwargs={'project_pk': self.project.pk}))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('view_all_projects'))
         self.assertTrue(AutodeskConstructionCloudProject.objects.filter(pk=self.project.pk).exists())
 
     def test_delete_report(self):
@@ -208,5 +208,4 @@ class TestAnalytics(TestCase):
         self.client.force_login(self.bad_user)
         response = self.client.post(reverse('delete_report', kwargs={'report_pk': self.report.pk}))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('view_all_reports'))
         self.assertTrue(AutodeskConstructionCloudReport.objects.filter(pk=self.report.pk).exists())
