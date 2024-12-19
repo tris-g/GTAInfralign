@@ -173,6 +173,13 @@ class TestAnalytics(TestCase):
         self.project.refresh_from_db()
         self.assertEqual(self.project.name, 'Updated Project')
 
+    def test_update_project_post(self):
+        self.client.force_login(self.bad_user)
+        response = self.client.post(reverse('update_project', kwargs={'project_pk': self.project.pk}), {'name': 'Bad Updated Project', 'org': self.project.org})
+        self.assertEqual(response.status_code, 302)
+        self.project.refresh_from_db()
+        self.assertNotEqual(self.project.name, 'Updated Bad Project')
+
     def test_update_report(self):
         self.client.force_login(self.good_user)
         response = self.client.get(reverse('update_report', kwargs={'report_pk': self.report.pk}))
@@ -185,6 +192,13 @@ class TestAnalytics(TestCase):
         self.assertEqual(response.status_code, 302)
         self.report.refresh_from_db()
         self.assertEqual(self.report.name, 'Updated Report')
+    
+    def test_update_report_post(self):
+        self.client.force_login(self.bad_user)
+        response = self.client.post(reverse('update_report', kwargs={'report_pk': self.report.pk}), {'name': 'Bad Updated Report', 'project': self.report.project.pk, 'data': self.report.data})
+        self.assertEqual(response.status_code, 302)
+        self.report.refresh_from_db()
+        self.assertNotEqual(self.report.name, 'Bad Updated Report')
     
     def test_delete_project(self):
         self.client.force_login(self.good_user)
