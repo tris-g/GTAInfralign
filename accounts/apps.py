@@ -7,5 +7,6 @@ class AccountsConfig(AppConfig):
     name = 'accounts'
 
     def ready(self):
+        # Creates a default superuser if one is not active.
         from .signals import initialise_superuser
         post_migrate.connect(initialise_superuser, sender=self)

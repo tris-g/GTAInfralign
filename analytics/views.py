@@ -25,6 +25,7 @@ def dashboard(request):
 @require_http_methods(['GET'])
 @permission_required('analytics.view_autodeskconstructioncloudproject', 'dashboard')
 def view_all_projects(request):
+    # If search specified use it else return projects using search vector
     if request.GET.get('search'):
         p = AutodeskConstructionCloudProject.objects.annotate(search=SearchVector('name', 'org'),).filter(search=request.GET.get('search'))
     else:
@@ -36,6 +37,7 @@ def view_all_projects(request):
 @permission_required('analytics.view_autodeskconstructioncloudproject', 'dashboard')
 def view_project(request, project_pk):
     project = get_object_or_404(AutodeskConstructionCloudProject, pk=project_pk)
+    # If report specified use it else return latest report
     if request.GET.get('report'):
         report = get_object_or_404(AutodeskConstructionCloudReport, pk=request.GET.get('report'))
     else:
@@ -51,6 +53,7 @@ def view_project(request, project_pk):
 @require_http_methods(['GET', 'POST'])
 @permission_required('analytics.add_autodeskconstructioncloudproject', 'view_all_projects')
 def add_project(request):
+    # If POST method fill form and save if valid else return an empty form
     if request.method == "POST":
         form = AutodeskConstructionCloudProjectForm(data=request.POST)
         if form.is_valid():
@@ -99,15 +102,22 @@ def delete_project(request, project_pk):
 @require_http_methods(['GET'])
 @permission_required('analytics.view_autodeskconstructioncloudreport', 'dashboard')
 def view_all_reports(request):
-    r = AutodeskConstructionCloudReport.objects.all()
+    # If search specified use it else return reports using search vector
+    if request.GET.get('search'):
+        r = AutodeskConstructionCloudReport.objects.annotate(search=SearchVector('project', 'name'),).filter(search=request.GET.get('search'))
+    else:
+        r = AutodeskConstructionCloudReport.objects.all()
     return render(request, 'view_all_reports.html', {'reports_list': r})
 
 @login_required
 @require_http_methods(['GET', 'POST'])
 @permission_required('analytics.add_autodeskconstructioncloudreport', 'view_all_reports')
 def add_report(request):
+    # If POST method fill form and save if valid else return an empty form
     if request.method == "POST":
+        # First copy the request so its mutable
         updated_request = request.POST.copy()
+        # If uploaded file present update field with fetched JSON
         if request.FILES.get('excel_report'):
             updated_request.update({'data': [json_from_excel(request.FILES.get('excel_report'))]})
         form = AutodeskConstructionCloudReportForm(data=updated_request)
@@ -165,11 +175,14 @@ def report_data(request, report_pk):
 @login_required
 @require_http_methods(['GET'])
 def dash_data(request):
+    """Returns a JSONResponse of data for the dashboard."""
     num_files = 0; num_data = 0; num_reports = 0
+    # Loop through reports to grab relevant data
     for rep in AutodeskConstructionCloudReport.objects.all():
         file_size_data = rep.data[0].get('file_sizes').values()
         num_files += len(file_size_data)
         num_data += sum(file_size_data)
         num_reports += 1
+    # Get total num of projects
     num_projects = len(AutodeskConstructionCloudProject.objects.all())
     return JsonResponse({'files': num_files, 'data': num_data, 'projects': num_projects, 'reports': num_reports})

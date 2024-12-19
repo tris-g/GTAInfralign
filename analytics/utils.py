@@ -8,17 +8,24 @@ ALLOWED_FIELDS = ['Last updated', 'File size', 'RIBA Stage', 'Version number', '
 STATUS_ORDER = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'S0', 'S1', 'S2', 'S3', 'S4', 'S5']
 
 def verbose_user(request) -> str:
-    """Returns a unique string representing the user within the request. Meant for logging purposes."""
+    """
+    Returns a unique string representing the user within the request. Meant for logging purposes.
+    """
     return f"[{request.user.pk}:{request.user.username}]"
 
 def log_form_errors(form, request):
+    """
+    Logs all form errors and sends error messages to the user.
+    """
     for field, errors in form.errors.get_json_data().items():
         for error in errors:
             logger.debug(f"[{verbose_user(request)}] [Form Error] {field}: {error['message']}")
             messages.error(request, f"{field}: {error['message']}")
 
 def convert_to_bytes(size_str: str):
-    """Convert a file size string like '1.3 MB' or '567 KB' to bytes."""
+    """
+    Convert a digital storage size string like '1.3 MB' or '567 KB' to bytes integer.
+    """
     size_units = {"KB": 1024, "MB": 1024**2, "GB": 1024**3}
     
     # Split the string into the numeric part and the unit
@@ -35,9 +42,15 @@ def convert_to_bytes(size_str: str):
     
     return int(number * size_units[unit])
 
-def json_from_excel(file) -> str:
+def json_from_excel(filepath) -> str:
+    """
+    Translates an excel report file into JSON data for the AutodeskConstructionCloudReport model.
+
+    Args:
+        file (str): The filepath to an excel report.
+    """
     # Read only the expected fields
-    df = pandas.read_excel(file, sheet_name='Files')[ALLOWED_FIELDS]
+    df = pandas.read_excel(filepath, sheet_name='Files')[ALLOWED_FIELDS]
     # Convert 'Last updated' to datetime.date
     df['Last updated'] = pandas.to_datetime(df['Last updated']).dt.date
     # Create a DataFrame with 'date' and 'value'
