@@ -127,23 +127,21 @@
         url: $("#report-data").attr("data-url"),
         dataType: 'json',
         success: function(dict) {
+
+            // aishek (2024) jquery.animateNumber, Github.io. Available at: https://aishek.github.io/jquery-animateNumber/ (Accessed: 20 December 2024).
             // Populate the cards
-            setTimeout(() => {
-                // Simulating an AJAX response
-                const fileNumber = Object.values(dict.file_sizes).length;
-                $('#file-num').animateNumber({ number: fileNumber, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
-                const sizeNumber = (Object.values(dict.file_sizes).reduce((partialSum, a) => partialSum + a, 0) / 1e+9).toFixed(1);
-                $('#file-size').animateNumber({ number: sizeNumber, easing: STAT_ANIM, numberStep: function (now, tween) {
-                        // Format the number with one decimal place
-                        $(tween.elem).text(now.toFixed(1));
-                    }}, STAT_ANIM_WAIT_TIME);
-                $('#d-num').animateNumber({ number: dict.deliverables[0].value, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
-                $('#nd-num').animateNumber({ number: dict.deliverables[1].value, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
-            }, 500);
+            const fileNumber = Object.values(dict.file_sizes).length;
+            $('#file-num').animateNumber({ number: fileNumber, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+            const sizeNumber = (Object.values(dict.file_sizes).reduce((partialSum, a) => partialSum + a, 0) / 1e+9).toFixed(1);
+            $('#file-size').animateNumber({ number: sizeNumber, easing: STAT_ANIM, numberStep: function (now, tween) {
+                    // Format the number with one decimal place
+                    $(tween.elem).text(now.toFixed(1));
+                }}, STAT_ANIM_WAIT_TIME);
+            $('#d-num').animateNumber({ number: dict.deliverables[0].value, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
+            $('#nd-num').animateNumber({ number: dict.deliverables[1].value, easing: STAT_ANIM }, STAT_ANIM_WAIT_TIME);
             
             const dateData = dict.last_updated
-            console.log(dateData)
-            // Paint the activity heatmap (cal-heatmap)
+            // Cal-Heatmap (2024) Showcase, Cal-heatmap.com. Available at: https://cal-heatmap.com/docs/showcase (Accessed: 20 December 2024).
             cal.paint(
             {
                 data: {
@@ -204,6 +202,7 @@
                 ],
             ]
             );
+
             // Extract labels and values from the data
             const statusData = dict.statuses
             // statusData.sort((a, b) => parseFloat(a.version) - parseFloat(b.version));
@@ -216,6 +215,7 @@
                 return `rgba(${r}, ${g}, ${b}, 0.7)`; // Semi-transparent random color
             });
 
+            // Chart.js (2024) Bar Chart, Chartjs.org. Available at: https://www.chartjs.org/docs/latest/charts/bar.html (Accessed: 20 December 2024).
             // Create the chart
             const statusCtx = document.getElementById('status-chart').getContext('2d');
             new Chart(statusCtx, {
@@ -254,6 +254,7 @@
                 }
             }
             });
+
             // Extract labels and values from the data
             const versionData = dict.versions
             versionData.sort((a, b) => parseFloat(a.version) - parseFloat(b.version));
@@ -266,6 +267,7 @@
                 return `rgba(${r}, ${g}, ${b}, 0.7)`; // Semi-transparent random color
             });
 
+            // Chart.js (2024) Bar Chart, Chartjs.org. Available at: https://www.chartjs.org/docs/latest/charts/bar.html (Accessed: 20 December 2024).
             // Create the chart
             const versionCtx = document.getElementById('version-chart').getContext('2d');
             new Chart(versionCtx, {
