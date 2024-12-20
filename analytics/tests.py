@@ -38,16 +38,8 @@ class TestAnalytics(TestCase):
             permissions = Permission.objects.filter(content_type=content_type, codename__in=PERMISSION_CODENAMES)
             self.good_user.user_permissions.add(*permissions)
         
-        self.project = AutodeskConstructionCloudProject.objects.create(
-            name="Test Project",
-            org="Test Organisation"
-        )
-        
-        self.report = AutodeskConstructionCloudReport.objects.create(
-            project=self.project,
-            name="Test Report",
-            data=SAMPLE_REPORT_DATA
-        )
+        self.project = AutodeskConstructionCloudProject.objects.create(name="Test Project",org="Test Organisation")
+        self.report = AutodeskConstructionCloudReport.objects.create(project=self.project,name="Test Report",data=SAMPLE_REPORT_DATA)
 
     def test_dashboard(self):
         self.client.force_login(self.good_user)
@@ -115,20 +107,14 @@ class TestAnalytics(TestCase):
     def test_add_report_post(self):
         self.client.force_login(self.good_user)
 
+        # Cabello, D. (2014) How to unit test file upload in Django, Stack Overflow. Available at: https://stackoverflow.com/questions/11170425/how-to-unit-test-file-upload-in-django (Accessed: 18 December 2024).
+
         # Load the local test Excel file
         with open('static/testing/.xlsx', 'rb') as f:
-            excel_file = SimpleUploadedFile(
-                ".xlsx",    # File name
-                f.read(),   # File content
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+            excel_file = SimpleUploadedFile(".xlsx", f.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
         # Simulate a POST request with the Excel file
-        response = self.client.post(
-            reverse('add_report'),
-            {'excel_report': excel_file, 'project': self.project.pk, 'name': 'Good report'},  # File passed in the POST data
-            format='multipart'
-        )
+        response = self.client.post(reverse('add_report'), {'excel_report': excel_file, 'project': self.project.pk, 'name': 'Good report'}, format='multipart')
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('view_all_reports'))
@@ -140,20 +126,14 @@ class TestAnalytics(TestCase):
         self.bad_user.user_permissions.add(view_permission)
         self.client.force_login(self.bad_user)
 
+        # Cabello, D. (2014) How to unit test file upload in Django, Stack Overflow. Available at: https://stackoverflow.com/questions/11170425/how-to-unit-test-file-upload-in-django (Accessed: 18 December 2024).
+
         # Load the local test Excel file
         with open('static/testing/.xlsx', 'rb') as f:
-            excel_file = SimpleUploadedFile(
-                ".xlsx",    # File name
-                f.read(),   # File content
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+            excel_file = SimpleUploadedFile(".xlsx", f.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
         # Simulate a POST request with the Excel file
-        response = self.client.post(
-            reverse('add_report'),
-            {'excel_report': excel_file, 'project': self.project.pk, 'name': 'Bad report'},  # File passed in the POST data
-            format='multipart'
-        )
+        response = self.client.post(reverse('add_report'), {'excel_report': excel_file, 'project': self.project.pk, 'name': 'Bad report'}, format='multipart')
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('view_all_reports'))
