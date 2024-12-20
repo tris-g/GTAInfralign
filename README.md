@@ -33,3 +33,5 @@ Lastly, run the server.
 ```
 python manage.py runserver
 ```
+## Licences
+Please refer to each package in `requirements.txt` for their specific licence.
